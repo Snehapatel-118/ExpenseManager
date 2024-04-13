@@ -1,0 +1,35 @@
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+mat-table {
+  width: 100%;
+  /* border: 0.1rem solid rgb(128, 125, 125); */
+}
+
+.mat-column-expenseDate {
+  /* border-left: 0.1rem solid rgb(128, 125, 125); */
+  /* border-bottom: 0.1rem solid rgb(128, 125, 125); */
+}
+
+.mat-column-expenseTypeDesc,
+.mat-column-expenseNarration,
+.mat-column-amount {
+  /* border-left: 0.1rem solid rgb(128, 125, 125); */
+  /* border-bottom: 0.1rem solid rgb(128, 125, 125); */
+}
+
+.mat-column-actions {
+  /* border-right: 0.1rem solid rgb(128, 125, 125); */
+  /* border-left: 0.1rem solid rgb(128, 125, 125); */
+  /* border-bottom: 0.1rem solid rgb(128, 125, 125); */
+}
+
+

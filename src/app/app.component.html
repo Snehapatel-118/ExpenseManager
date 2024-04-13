@@ -1,0 +1,290 @@
+<div class="card">
+  <div class="card-header">
+    <div class="row">
+      <div class="card-title mt-2 col-lg-11 col-md-1">
+        <span class="fs-2 text-start"> Expense Manager | </span>
+        <span class="text-center"><mat-icon> account_circle </mat-icon></span>
+        <span class="fs-5">
+          {{ this.userInfo?.userName }}
+        </span>
+      </div>
+
+      <!-- <span class="card-subtitle col-lg-3 float-right"><b>User:</b> </span> -->
+
+      <div class="col-lg-1 col-md-1">
+        <button
+          mat-stroked-button
+          color="primary"
+          class="mt-2 float-end"
+          (click)="onAddClicked()"
+        >
+          <mat-icon [hidden]="showForm">add</mat-icon>
+          <mat-icon [hidden]="!showForm">close</mat-icon>
+          {{ addBtnText }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <form [hidden]="!showForm" [formGroup]="expenseFormGroup">
+      <div class="container-fluid">
+        <div class="row">
+          <mat-form-field class="col-lg-2 col-md-2" [appearance]="'outline'">
+            <mat-label>Date</mat-label>
+            <input
+              matInput
+              formControlName="expenseDate"
+              placeholder="Date"
+              readonly
+              name="expenseDate"
+              required
+              [matDatepicker]="expDatePicker"
+              (click)="expDatePicker.open()"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="expDatePicker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #expDatePicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field class="col-lg-3 col-md-3" [appearance]="'outline'">
+            <mat-label>Expense Type</mat-label>
+            <mat-select
+              formControlName="expenseTypeId"
+              placeholder="Expense Type"
+            >
+              @for (option of expenseTypeList; track option) {
+              <mat-option [value]="option.expenseTypeId">{{
+                option.expenseTypeDesc
+              }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="col-lg-3 col-md-3" [appearance]="'outline'">
+            <mat-label>Narration</mat-label>
+            <input
+              required
+              matInput
+              formControlName="expenseNarration"
+              placeholder="Narration"
+              maxlength="1000"
+            />
+          </mat-form-field>
+
+          <mat-form-field
+            class="col-lg-2 col-md-2"
+            [floatLabel]="'always'"
+            [appearance]="'outline'"
+          >
+            <mat-label>Amount</mat-label>
+            <span matTextPrefix>$&nbsp;</span>
+            <input
+              matInput
+              formControlName="amount"
+              placeholder="Amount"
+              type="number"
+              [min]="0"
+            />
+          </mat-form-field>
+
+          <div class="col-lg-1 col-md-1">
+            <button
+              mat-stroked-button
+              color="primary"
+              [disabled]="!expenseFormGroup.valid"
+              class="mt-2"
+              (click)="onSave()"
+            >
+              <mat-icon>check</mat-icon>
+              Save
+            </button>
+          </div>
+
+          <div class="col-lg-1 col-md-1">
+            <button
+              type="button"
+              mat-stroked-button
+              color="accent"
+              class="mt-2"
+              (click)="expenseFormGroup.reset()"
+            >
+              <mat-icon>clear_all</mat-icon>
+              Clear
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <mat-divider [hidden]="!showForm" class="mt-1 mb-2"></mat-divider>
+
+    <form [formGroup]="expenseGridGroup">
+      <div class="container-fluid">
+        <div class="row">
+          <mat-form-field class="col-lg-2 col-md-2" [appearance]="'outline'">
+            <input
+              placeholder="Search"
+              name="gridFilter"
+              (keyup)="applyFilter($event)"
+              matInput
+            />
+          </mat-form-field>
+
+          <mat-form-field class="col-lg-2 col-md-2" [appearance]="'outline'">
+            <mat-label>From Date</mat-label>
+            <input
+              matInput
+              formControlName="fromDate"
+              placeholder="From Date"
+              readonly
+              name="fromDate"
+              required
+              [matDatepicker]="fromDatePicker"
+              (click)="fromDatePicker.open()"
+              (dateChange)="onDateChange('fromDate')"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="fromDatePicker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #fromDatePicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field class="col-lg-2 col-md-2" [appearance]="'outline'">
+            <mat-label>To Date</mat-label>
+            <input
+              matInput
+              formControlName="toDate"
+              placeholder="To Date"
+              readonly
+              name="toDate"
+              required
+              [matDatepicker]="toDatePicker"
+              (click)="toDatePicker.open()"
+              (dateChange)="onDateChange('toDate')"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="toDatePicker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #toDatePicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field class="col-lg-2" [appearance]="'outline'">
+            <mat-label>Grid view</mat-label>
+            <mat-select
+              formControlName="gridType"
+              placeholder="Grid View"
+              (selectionChange)="onGridViewChange()"
+            >
+              @for (option of gridTypeList; track option) {
+              <mat-option [value]="option.value">{{ option.desc }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field
+            class="col-lg-3 col-md-3"
+            [appearance]="'outline'"
+            [hidden]="!showExpenseTypeSelection"
+          >
+            <mat-label>Expense Type</mat-label>
+            <mat-select
+              formControlName="expenseTypeId"
+              placeholder="Expense Type"
+            >
+              <mat-option [value]="0">ALL</mat-option>
+              @for (option of expenseTypeList; track option) {
+              <mat-option [value]="option.expenseTypeId">{{
+                option.expenseTypeDesc
+              }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <div class="col-lg-1 col-md-1">
+            <button
+              type="submit"
+              mat-flat-button
+              color="primary"
+              class="float-end mt-2"
+              (click)="loadGrid()"
+            >
+              Fetch
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <mat-divider class="mt-1 mb-2"></mat-divider>
+
+    <div class="container-fluid">
+      <div class="row">
+        <mat-table
+          class="col-12"
+          [dataSource]="expenseMatTableDataSource"
+          matSort
+          #sort
+        >
+          <ng-container matColumnDef="expenseDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header
+              >Expense Date</mat-header-cell
+            >
+            <mat-cell *matCellDef="let element">
+              {{ element.expenseDate | date : "dd/MM/yyyy" }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="expenseTypeDesc">
+            <mat-header-cell *matHeaderCellDef mat-sort-header
+              >Expense Type</mat-header-cell
+            >
+            <mat-cell *matCellDef="let element">
+              {{ element.expenseTypeDesc }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="expenseNarration">
+            <mat-header-cell *matHeaderCellDef mat-sort-header
+              >Expense Narration</mat-header-cell
+            >
+            <mat-cell *matCellDef="let element">
+              {{ element.expenseNarration }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="amount">
+            <mat-header-cell *matHeaderCellDef mat-sort-header
+              >Amount</mat-header-cell
+            >
+            <mat-cell *matCellDef="let element">
+              {{ element.amount | number : "1.2-2" }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <button
+                mat-icon-button
+                (click)="getExpenseById(row)"
+                matTooltip="Edit Expense"
+              >
+                <mat-icon style="color: #003b9a">edit</mat-icon>
+              </button>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row
+            *matHeaderRowDef="displayColumns; sticky: true"
+          ></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayColumns"></mat-row>
+        </mat-table>
+      </div>
+    </div>
+  </div>
+</div>
