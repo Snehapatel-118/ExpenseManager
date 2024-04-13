@@ -165,6 +165,7 @@
               [matDatepicker]="toDatePicker"
               (click)="toDatePicker.open()"
               (dateChange)="onDateChange('toDate')"
+              [min]="fromDate"
             />
             <mat-datepicker-toggle
               matSuffix
