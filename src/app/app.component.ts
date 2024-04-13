@@ -139,7 +139,11 @@ export class AppComponent implements OnInit {
     }
     await this.appService.getExpenseById(reqObj).then((res) => {
       if (res.isSuccessful) {
-        this.onAddClicked();
+        if(!this.showForm){
+          this.onAddClicked();
+        }
+        // this.showForm = true;
+        // this.addBtnText = "Close";
         const data = res.data
         this.expenseFormGroup.patchValue({
           expenseDate: new Date(data.expenseDate),
